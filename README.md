@@ -19,3 +19,7 @@ run sudo node main.js to start
 4. the /spawn command is being used to create a new server running on a different port. I have specified a base port which is being incrmeneted to create new ports. Also i'm keeping a global count of the ports that are currently in use. The ports are being stored in a servers list. The /destroy route is used to destroy and exsting server. The ports are being randomly choosen and the lrem command is being used to remove the server.The /listservers is being used to display the current servers in use , by using the lrange command.
 
 5. I have created a proxy server on port 80 ,with 2 servers on port 3000 and 3001. I'm toggling between the 2 using the rpoplpush. The 2 servers are being togged each time a visit to http:localhost/3000 takes place. 
+
+#### Screencast
+
+https://www.youtube.com/upload
