@@ -21,8 +21,7 @@ var portNumbers = [];
 var proxyServer = http.createServer(function(req,res) {
     client.rpoplpush('proxyQueue','proxyQueue', function(err,value) {
         console.log("Switching" + value );
-        //var proxy_server = http_proxy.createProxyServer({target: localhost + value})
-        var proxy = http_proxy.createProxyServer({target: reply});
+        var proxy = http_proxy.createProxyServer({target: value});
 		proxy.web(req, res);
     })
 })
@@ -121,15 +120,14 @@ app.get('/recent', function(req, res) {
 
 
 app.get('/set',  function(req, res) {
-  client.set("key1" , "val1");
-  client.expire("key1" ,10);
+  client.set("key" , "val1");
+  client.expire("key" ,10);
 })
 
 
 app.get('/get',  function(req, res) {
-  value = client.get("key1");
-  res.send(value);
-});
+  client.get("key", function(err,value){ res.send(value)});
+  });
 
 
 app.get('/spawn', function(req, res){
