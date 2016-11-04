@@ -1,79 +1,21 @@
 Cache, Proxies, Queues
 =========================
 
-### Setup
+#### Setup
 
-* Clone this repo, run `npm install`.
-* Install redis and run on localhost:6379
+Install redis
+Start redis server by the command redis-server
+run npm install
+run sudo node main.js to start
 
-### A simple web server
+##### Tasks Completed
 
-Use [express](http://expressjs.com/) to install a simple web server.
+1. The created server can be accessed using localhost:3000. The /se route sets a key and a value. Also this key expires in 10 secs. the /get route is used to fetch the value which will not be able to be seen after 10 secs. 
 
-	var server = app.listen(3000, function () {
-	
-	  var host = server.address().address
-	  var port = server.address().port
-	
-	  console.log('Example app listening at http://%s:%s', host, port)
-	})
+2. The /recent route gives us the last 5 routes that have been visited. this is being stored in a list and the lpush,ltrim and lrange operations are being used to add ,maintain 5 recent urls and return the list respectively.
 
-Express uses the concept of routes to use pattern matching against requests and sending them to specific functions.  You can simply write back a response body.
+3. The curl -F "image=@./img/i-scream.jpg" localhost:3000/upload command is being used to upload the images that can be seen by visiting the route /upload . the /meow route displays the last image that has been added and also removes it from the list using the lpop operation.
 
-	app.get('/', function(req, res) {
-	  res.send('hello world')
-	})
+4. the /spawn command is being used to create a new server running on a different port. I have specified a base port which is being incrmeneted to create new ports. Also i'm keeping a global count of the ports that are currently in use. The ports are being stored in a servers list. The /destroy route is used to destroy and exsting server. The ports are being randomly choosen and the lrem command is being used to remove the server.The /listservers is being used to display the current servers in use , by using the lrange command.
 
-### Redis
-
-You will be using [redis](http://redis.io/) to build some simple infrastructure components, using the [node-redis client](https://github.com/mranney/node_redis).
-
-	var redis = require('redis')
-	var client = redis.createClient(6379, '127.0.0.1', {})
-
-In general, you can run all the redis commands in the following manner: client.CMD(args). For example:
-
-	client.set("key", "value");
-	client.get("key", function(err,value){ console.log(value)});
-
-### An expiring cache
-
-Create two routes, `/get` and `/set`.
-
-When `/set` is visited, set a new key, with the value:
-> "this message will self-destruct in 10 seconds".
-
-Use the expire command to make sure this key will expire in 10 seconds.
-
-When `/get` is visited, fetch that key, and send value back to the client: `res.send(value)` 
-
-
-### Recent visited sites
-
-Create a new route, `/recent`, which will display the most recently visited sites.
-
-There is already a global hook setup, which will allow you to see each site that is requested:
-
-	app.use(function(req, res, next) 
-	{
-	...
-
-Use the lpush, ltrim, and lrange redis commands to store the most recent 5 sites visited, and return that to the client.
-
-### Cat picture uploads: queue
-
-Implement two routes, `/upload`, and `/meow`.
- 
-A stub for upload and meow has already been provided.
-
-Use curl to help you upload easily.
-
-	curl -F "image=@./img/morning.jpg" localhost:3000/upload
-
-Have `upload` store the images in a queue.  Have `meow` display the most recent image to the client and *remove* the image from the queue. Note, this is more like a stack.
-
-### Proxy server
-
-Bonus: How might you use redis and express to introduce a proxy server?
-
-See [rpoplpush](http://redis.io/commands/rpoplpush)
+5. I have created a proxy server on port 80 ,with 2 servers on port 3000 and 3001. I'm toggling between the 2 using the rpoplpush. The 2 servers are being togged each time a visit to http:localhost/3000 takes place. 
