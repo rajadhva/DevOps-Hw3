@@ -18,19 +18,17 @@ var portNumbers = [];
 
 // Create HTTP Proxy
 
-var proxy = http_proxy.createProxyServer({});
-
 var proxyServer = http.createServer(function(req,res) {
     client.rpoplpush('proxyQueue','proxyQueue', function(err,reply) {
         console.log("Switching" + reply );
         var url = 'http://localhost:' + reply
-		proxy.web(req, res, {target: url});
+		httpProxy.createProxyServer({}).web(req, res, {target: url})
     })
-}).listen(80)
+})
 
-// proxyServer.listen(80, function() {
-// 	console.log("listening on port 80")
-// });
+proxyServer.listen(80, function() {
+	console.log("listening on port 80")
+});
 
 
 // Add hook to make it easier to get all visited URLS.
